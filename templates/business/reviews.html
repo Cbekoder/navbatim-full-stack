@@ -1,0 +1,155 @@
+{% extends 'business/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Reviews | {{ business.business_name }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="space-y-6">
+    <!-- Overview Stats -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-medium mb-4">Reviews Overview</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Total Reviews -->
+            <div>
+                <h3 class="text-md font-medium mb-2">Total Reviews</h3>
+                <p class="text-3xl font-semibold text-gray-900">{{ total_reviews }}</p>
+            </div>
+            
+            <!-- Average Rating -->
+            <div>
+                <h3 class="text-md font-medium mb-2">Average Rating</h3>
+                <div class="flex items-center">
+                    <p class="text-3xl font-semibold text-gray-900">{{ avg_rating|floatformat:1 }}</p>
+                    <div class="ml-2 flex items-center">
+                        {% for i in "12345" %}
+                        <svg class="h-5 w-5 {% if forloop.counter <= avg_rating|floatformat:0 %}text-yellow-400{% else %}text-gray-300{% endif %}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Rating Distribution -->
+            <div>
+                <h3 class="text-md font-medium mb-2">Rating Distribution</h3>
+                <div class="space-y-2">
+                    {% for i in "54321" %}
+                    <div class="flex items-center">
+                        <div class="w-6 text-sm font-medium text-gray-600">{{ i }} ★</div>
+                        <div class="w-full h-2 mx-2 bg-gray-200 rounded-full">
+                            <div class="h-2 bg-yellow-400 rounded-full" style="width: {% if total_reviews > 0 %}{{ rating_distribution|get_item:i|default:0|divisibleby:total_reviews|floatformat:2|mul:100 }}{% else %}0{% endif %}%"></div>
+                        </div>
+                        <div class="w-10 text-sm font-medium text-gray-600">{{ rating_distribution|get_item:i|default:0 }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reviews List -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+            <h2 class="text-lg font-medium text-gray-900">Customer Reviews</h2>
+        </div>
+        
+        <div class="border-t border-gray-200">
+            {% if reviews %}
+            <ul role="list" class="divide-y divide-gray-200">
+                {% for review in reviews %}
+                <li>
+                    <div class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    {% if review.user.profile_picture %}
+                                    <img class="h-10 w-10 rounded-full" src="{{ review.user.profile_picture.url }}" alt="{{ review.user.get_full_name|default:review.user.username }}">
+                                    {% else %}
+                                    <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                                        <span class="text-sm font-medium text-indigo-800">
+                                            {{ review.user.get_full_name|default:review.user.username|make_list|first|upper }}
+                                        </span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ review.user.get_full_name|default:review.user.username }}
+                                    </div>
+                                    <div class="text-sm text-gray-500">
+                                        <time datetime="{{ review.created_at|date:'c' }}">{{ review.created_at|date:"F j, Y" }}</time>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                {% for i in "12345" %}
+                                <svg class="h-5 w-5 {% if forloop.counter <= review.rating %}text-yellow-400{% else %}text-gray-300{% endif %}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-600">{{ review.comment }}</p>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            
+            <!-- Pagination -->
+            {% if reviews.has_other_pages %}
+            <nav class="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Showing page {{ reviews.number }} of {{ reviews.paginator.num_pages }}
+                        </p>
+                    </div>
+                    <div>
+                        <ul class="flex items-center">
+                            {% if reviews.has_previous %}
+                            <li>
+                                <a href="?page={{ reviews.previous_page_number }}" class="px-2 py-2 rounded-md text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    Previous
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            {% for i in reviews.paginator.page_range %}
+                                {% if reviews.number == i %}
+                                <li>
+                                    <a href="#" class="px-4 py-2 rounded-md text-sm font-medium text-indigo-600 bg-indigo-50">{{ i }}</a>
+                                </li>
+                                {% elif i > reviews.number|add:'-3' and i < reviews.number|add:'3' %}
+                                <li>
+                                    <a href="?page={{ i }}" class="px-4 py-2 rounded-md text-sm font-medium text-gray-500 hover:bg-gray-50">{{ i }}</a>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if reviews.has_next %}
+                            <li>
+                                <a href="?page={{ reviews.next_page_number }}" class="px-2 py-2 rounded-md text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    Next
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            {% endif %}
+            
+            {% else %}
+            <div class="px-4 py-6 text-center text-gray-500">
+                <p>No reviews yet.</p>
+                <p class="mt-1 text-sm">As clients experience your services, they'll have the opportunity to leave reviews.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

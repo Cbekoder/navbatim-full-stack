@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Aksiyalar va Chegirmalar - Navbatim.uz{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h1 class="display-5">Aksiyalar va Chegirmalar</h1>
+            <p class="text-muted">Bizneslardan eng yaxshi takliflar va chegirmalar</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% if deals %}
+            {% for deal in deals %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        {% if deal.image %}
+                            <img src="{{ deal.service.business.logo.url }}" alt="{{ deal.title }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'img/default-deal.jpg' %}" alt="{{ deal.title }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="badge bg-danger mb-2">{{ deal.discount }}% chegirma</div>
+                            <h5 class="card-title">{{ deal.title }}</h5>
+                            <p class="card-text">{{ deal.description|truncatechars:100 }}</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="bi bi-shop me-1"></i>{{ deal.business.business_name }}
+                                </small>
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar-event me-1"></i>{{ deal.end_date|date:"j F, Y" }} gacha amal qiladi
+                                </small>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <a href="business_detail/{{ deal.business.id }}" class="btn btn-outline-primary btn-sm stretched-link">Biznesga o'tish</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <p class="mb-0">Hozirda faol aksiyalar mavjud emas.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Xizmatlar katalogi - Navbatim.uz{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="get" action="{% url 'services:service_list' %}">
+                        <div class="mb-3">
+                            <label for="search" class="form-label">Qidirish</label>
+                            <input type="text" class="form-control" id="search" name="q" value="{{ request.GET.q|default:'' }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Saralash</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sort" id="sort-popularity" value="popularity" {% if not request.GET.sort or request.GET.sort == 'popularity' %}checked{% endif %}>
+                                <label class="form-check-label" for="sort-popularity">
+                                    Mashhurlik
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sort" id="sort-rating" value="rating" {% if request.GET.sort == 'rating' %}checked{% endif %}>
+                                <label class="form-check-label" for="sort-rating">
+                                    Reyting
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sort" id="sort-reviews" value="reviews" {% if request.GET.sort == 'reviews' %}checked{% endif %}>
+                                <label class="form-check-label" for="sort-reviews">
+                                    Sharhlar soni
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sort" id="sort-price-low" value="price-low" {% if request.GET.sort == 'price-low' %}checked{% endif %}>
+                                <label class="form-check-label" for="sort-price-low">
+                                    Narx: pastdan yuqoriga
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sort" id="sort-price-high" value="price-high" {% if request.GET.sort == 'price-high' %}checked{% endif %}>
+                                <label class="form-check-label" for="sort-price-high">
+                                    Narx: yuqoridan pastga
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Shahar</label>
+                            <select class="form-select" name="city">
+                                <option value="">Barcha shaharlar</option>
+                                <option value="tashkent" {% if request.GET.city == 'tashkent' %}selected{% endif %}>Toshkent</option>
+                                <option value="samarkand" {% if request.GET.city == 'samarkand' %}selected{% endif %}>Samarqand</option>
+                                <option value="bukhara" {% if request.GET.city == 'bukhara' %}selected{% endif %}>Buxoro</option>
+                                <option value="namangan" {% if request.GET.city == 'namangan' %}selected{% endif %}>Namangan</option>
+                                <option value="andijan" {% if request.GET.city == 'andijan' %}selected{% endif %}>Andijon</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Kategoriya</label>
+                            {% for category in categories %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="category" id="category-{{ category.id }}" value="{{ category.id }}" {% if category.id|stringformat:"i" in selected_categories %}checked{% endif %}>
+                                <label class="form-check-label" for="category-{{ category.id }}">
+                                    {{ category.name }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type" id="type-all" value="all" {% if not request.GET.type or request.GET.type == 'all' %}checked{% endif %}>
+                                <label class="form-check-label" for="type-all">
+                                    Barchasi
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type" id="type-companies" value="companies" {% if request.GET.type == 'companies' %}checked{% endif %}>
+                                <label class="form-check-label" for="type-companies">
+                                    Faqat kompaniyalar
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type" id="type-specialists" value="specialists" {% if request.GET.type == 'specialists' %}checked{% endif %}>
+                                <label class="form-check-label" for="type-specialists">
+                                    Faqat mutaxassislar
+                                </label>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="vip" id="vip" value="1" {% if request.GET.vip %}checked{% endif %}>
+                                    <label class="form-check-label" for="vip">
+                                        VIP status
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="award_winners" id="award_winners" value="1" {% if request.GET.award_winners %}checked{% endif %}>
+                                    <label class="form-check-label" for="award_winners">
+                                        Navbatim.uz mukofoti sovrindorlari
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Qo'llash</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h4 fw-bold m-0">Katalog</h1>
+                <span class="text-muted">{{ businesses|length }} ta natija topildi</span>
+            </div>
+            
+            <div class="d-flex flex-column gap-3">
+                {% for business in businesses %}
+                <div class="card border-0 shadow-sm position-relative">
+                    <div class="card-body">
+                        {% if user.is_authenticated %}
+                            {% if business in user.favorites.all %}
+                                <a href="{% url 'services:remove_favorite' business_id=business.id %}?next={{ request.path }}" class="position-absolute top-0 end-0 m-3 text-danger">
+                                    <i class="bi bi-heart-fill"></i>
+                                </a>
+                            {% else %}
+                                <a href="{% url 'services:add_favorite' business_id=business.id %}?next={{ request.path }}" class="position-absolute top-0 end-0 m-3 text-muted">
+                                    <i class="bi bi-heart"></i>
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                        
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                {% if business.logo %}
+                                    <img src="{{ business.logo.url }}" alt="{{ business.business_name }}" class="rounded" width="64" height="64">
+                                {% else %}
+                                    <div class="rounded bg-light d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                        <i class="bi bi-building fs-3 text-muted"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="flex-grow-1">
+                                <h5 class="card-title">{{ business.business_name }}</h5>
+                                <div class="d-flex align-items-center text-muted small mb-1">
+                                    <i class="bi bi-geo-alt me-1"></i>
+                                    <span>{{ business.address }}</span>
+                                </div>
+                                <div class="d-flex align-items-center text-muted small">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>
+                                    <span>{{ business.avg_rating|floatformat:1 }}</span>
+                                    <span class="mx-1">•</span>
+                                    <span>{{ business.review_count }} baho</span>
+                                </div>
+                            </div>
+                            
+                            <a href="{% url 'services:business_detail' pk=business.pk %}" class="btn btn-primary">Band qilish</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-5">
+                    <p class="text-muted">Hech qanday natija topilmadi.</p>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% if businesses %}
+            <div class="text-center mt-4">
+                <button class="btn btn-outline-primary">Ko'proq ko'rsatish</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

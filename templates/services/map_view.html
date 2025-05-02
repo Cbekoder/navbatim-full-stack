@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bizneslar xaritasi - Navbatim.uz{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 80vh;
+            width: 100%;
+            z-index: 1;
+        }
+        .map-sidebar {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card map-sidebar">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Filtrlash</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="category-filter" class="form-label">Kategoriya</label>
+                        <select id="category-filter" class="form-select">
+                            <option value="">Barcha kategoriyalar</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="search-filter" class="form-label">Qidirish</label>
+                        <input type="text" id="search-filter" class="form-control" placeholder="Biznes nomi...">
+                    </div>
+                    <button id="apply-filters" class="btn btn-primary w-100">Qo'llash</button>
+                </div>
+                
+                <div class="card-header mt-3">
+                    <h5 class="mb-0">Bizneslar</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush" id="business-list">
+                        {% for business in businesses %}
+                            <li class="list-group-item business-item" data-id="{{ business.id }}" data-lat="{{ business.latitude }}" data-lng="{{ business.longitude }}">
+                                <h6 class="mb-1">{{ business.business_name }}</h6>
+                                <small class="text-muted">
+                                    <i class="bi bi-geo-alt me-1"></i>{{ business.address|truncatechars:30 }}
+                                </small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div id="map"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize map
+            var map = L.map('map').setView([41.2995, 69.2401], 13); // Tashkent coordinates
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Add markers for businesses
+            var markers = {};
+            document.querySelectorAll('.business-item').forEach(function(item) {
+                var id = item.dataset.id;
+                var lat = parseFloat(item.dataset.lat);
+                var lng = parseFloat(item.dataset.lng);
+                
+                if (lat && lng) {
+                    var marker = L.marker([lat, lng]).addTo(map);
+                    marker.bindPopup('<b>' + item.querySelector('h6').innerText + '</b><br>' + 
+                                    item.querySelector('small').innerText + 
+                                    '<br><a href="/services/business/' + id + '/" class="btn btn-sm btn-primary mt-2">Batafsil</a>');
+                    
+                    markers[id] = marker;
+                    
+                    // Add click event to list item
+                    item.addEventListener('click', function() {
+                        map.setView([lat, lng], 16);
+                        marker.openPopup();
+                    });
+                }
+            });
+            
+            // Filter functionality
+            document.getElementById('apply-filters').addEventListener('click', function() {
+                var categoryId = document.getElementById('category-filter').value;
+                var searchText = document.getElementById('search-filter').value.toLowerCase();
+                
+                // Implement filter logic
+                // This would typically be an AJAX call to the server
+                // For now, just simulate filtering client-side for demonstration
+                
+                // Refresh the map based on filters
+                // This would be implemented with backend logic and API calls
+            });
+        });
+    </script>
+{% endblock %}

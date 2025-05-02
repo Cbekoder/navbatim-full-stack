@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }} - Navbatim.uz{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h1 class="display-5">{{ category.name }}</h1>
+            <p class="text-muted">{{ category.description }}</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% if businesses %}
+            {% for business in businesses %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        {% if business.cover_image %}
+                            <img src="{{ business.cover_image.url }}" alt="{{ business.business_name }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'img/default-business.jpg' %}" alt="{{ business.business_name }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ business.business_name }}</h5>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="me-2">
+                                    {% include 'includes/rating_stars.html' with rating=business.avg_rating %}
+                                </div>
+                                <small class="text-muted">({{ business.review_count|default:"0" }} sharhlar)</small>
+                            </div>
+                            <p class="card-text text-muted">
+                                <i class="bi bi-geo-alt me-1"></i>{{ business.address|truncatechars:40 }}
+                            </p>
+                            <a href="{% url 'business_detail' business.id %}" class="btn btn-outline-primary btn-sm stretched-link">Batafsil</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <p class="mb-0">Bu kategoriyada bizneslari topilmadi.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

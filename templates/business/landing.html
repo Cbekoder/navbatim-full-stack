@@ -1,0 +1,322 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Navbatim.uz - Biznes uchun{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/business-landing.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section bg-gradient-primary text-white">
+    <div class="container py-5">
+        <div class="row align-items-center py-5">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <h1 class="display-4 fw-bold mb-4">Biznesingizni Navbatim.uz bilan rivojlantiring</h1>
+                <p class="lead mb-4">Mijozlar navbatini boshqarish, onlayn band qilish va biznesingizni o'stirish uchun yagona platforma</p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="/account/signup/" class="btn btn-light btn-lg">Ro'yxatdan o'tish</a>
+                    <a href="#features" class="btn btn-outline-light btn-lg">Ko'proq ma'lumot</a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="{% static 'img/business-dashboard-preview.png' %}" alt="Navbatim.uz biznes paneli" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4 mb-md-0">
+                <div class="display-4 fw-bold text-primary">100,000+</div>
+                <p class="text-muted">Ro'yxatdan o'tgan foydalanuvchilar</p>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <div class="display-4 fw-bold text-primary">5,000+</div>
+                <p class="text-muted">Bizneslar</p>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <div class="display-4 fw-bold text-primary">2.5M+</div>
+                <p class="text-muted">Onlayn navbatlar</p>
+            </div>
+            <div class="col-md-3">
+                <div class="display-4 fw-bold text-primary">95+</div>
+                <p class="text-muted">Mamlakatlar</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Biznesingiz uchun ajoyib imkoniyatlar</h2>
+            <p class="lead text-muted">Navbatim.uz biznesingizni yangi darajaga olib chiqadi</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mb-3">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <h3 class="h4 mb-3">Onlayn navbat olish</h3>
+                        <p class="text-muted mb-0">Mijozlaringiz xizmatlaringizga onlayn navbat olishlari mumkin, bu esa vaqtni tejaydi va mijozlar oqimini tartibga soladi.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mb-3">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <h3 class="h4 mb-3">Biznes tahlili</h3>
+                        <p class="text-muted mb-0">Mijozlar, navbatlar va daromadlar bo'yicha batafsil tahlillar orqali biznesingizni yanada samarali boshqaring.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mb-3">
+                            <i class="bi bi-bell"></i>
+                        </div>
+                        <h3 class="h4 mb-3">Avtomatik bildirishnomalar</h3>
+                        <p class="text-muted mb-0">Mijozlaringizga navbatlari haqida avtomatik bildirishnomalar yuboriladi, bu esa kechikishlarni kamaytiradi.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mb-3">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h3 class="h4 mb-3">Mijozlar bazasi</h3>
+                        <p class="text-muted mb-0">Mijozlaringiz haqida ma'lumotlarni saqlang va tahlil qiling, bu esa marketing va xizmat ko'rsatishni yaxshilaydi.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mb-3">
+                            <i class="bi bi-star"></i>
+                        </div>
+                        <h3 class="h4 mb-3">Sharhlar va reytinglar</h3>
+                        <p class="text-muted mb-0">Mijozlar sharhlarini qabul qiling va reytinglaringizni oshiring, bu esa yangi mijozlarni jalb qiladi.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mb-3">
+                            <i class="bi bi-megaphone"></i>
+                        </div>
+                        <h3 class="h4 mb-3">Marketing imkoniyatlari</h3>
+                        <p class="text-muted mb-0">Maxsus takliflar va aksiyalar yarating, bu esa mijozlarni jalb qiladi va sodiqlikni oshiradi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Narxlar</h2>
+            <p class="lead text-muted">Har qanday biznes uchun mos tarif rejalarini tanlang</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 text-center pt-4">
+                        <h3 class="h4 fw-bold">Boshlang'ich</h3>
+                        <div class="display-5 fw-bold my-3">Bepul</div>
+                        <p class="text-muted">Kichik bizneslar uchun</p>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> 1 xodim</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> 50 navbat oyiga</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Asosiy tahlillar</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Email qo'llab-quvvatlash</li>
+                            <li class="mb-2 text-muted"><i class="bi bi-x-circle-fill me-2"></i> Premium listing</li>
+                            <li class="mb-2 text-muted"><i class="bi bi-x-circle-fill me-2"></i> Marketing vositalari</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer bg-white border-0 text-center pb-4">
+                        <a href="/account/signup/" class="btn btn-outline-primary btn-lg w-100">Boshlash</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-lg border-primary">
+                    <div class="card-header bg-white border-0 text-center pt-4 position-relative">
+                        <span class="position-absolute top-0 start-50 translate-middle badge bg-primary px-3 py-2">Eng mashhur</span>
+                        <h3 class="h4 fw-bold">Professional</h3>
+                        <div class="display-5 fw-bold my-3">299,000 <small class="fs-6 fw-normal text-muted">/ oyiga</small></div>
+                        <p class="text-muted">O'rta bizneslar uchun</p>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> 5 xodim</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Cheksiz navbatlar</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Kengaytirilgan tahlillar</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Prioritet qo'llab-quvvatlash</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Premium listing</li>
+                            <li class="mb-2 text-muted"><i class="bi bi-x-circle-fill me-2"></i> Marketing vositalari</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer bg-white border-0 text-center pb-4">
+                        <a href="/account/signup/" class="btn btn-primary btn-lg w-100">Boshlash</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 text-center pt-4">
+                        <h3 class="h4 fw-bold">Enterprise</h3>
+                        <div class="display-5 fw-bold my-3">599,000 <small class="fs-6 fw-normal text-muted">/ oyiga</small></div>
+                        <p class="text-muted">Katta bizneslar uchun</p>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Cheksiz xodimlar</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Cheksiz navbatlar</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> To'liq tahlillar</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> 24/7 qo'llab-quvvatlash</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Premium listing</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Marketing vositalari</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer bg-white border-0 text-center pb-4">
+                        <a href="/account/signup/" class="btn btn-outline-primary btn-lg w-100">Boshlash</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Biznes egalari nima deyishadi</h2>
+            <p class="lead text-muted">Navbatim.uz platformasidan foydalanayotgan biznes egalari fikrlari</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="mb-4">"Navbatim.uz biznesimizni boshqarishni tubdan o'zgartirdi. Mijozlar navbatini boshqarish juda oson bo'ldi va daromadimiz sezilarli darajada oshdi."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
+                                <span class="fw-bold">AK</span>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">Aziz Karimov</h5>
+                                <p class="text-muted mb-0">Beauty Zone saloni egasi</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="mb-4">"Mijozlarimiz Navbatim.uz orqali navbat olishni juda yaxshi ko'rishadi. Bizning ish jarayonimiz ancha yaxshilandi va mijozlar soni oshdi."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
+                                <span class="fw-bold">MS</span>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">Malika Saidova</h5>
+                                <p class="text-muted mb-0">Elite Clinic direktori</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="mb-4">"Navbatim.uz platformasi biznesimizni raqamlashtirish va mijozlar bilan munosabatlarni yaxshilashda juda muhim rol o'ynadi."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
+                                <span class="fw-bold">JA</span>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">Jamshid Aliyev</h5>
+                                <p class="text-muted mb-0">MediSpa rahbari</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-gradient-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mb-4 mb-lg-0">
+                <h2 class="display-5 fw-bold mb-3">Biznesingizni rivojlantirishga tayyormisiz?</h2>
+                <p class="lead mb-0">Bugun ro'yxatdan o'ting va Navbatim.uz bilan biznesingizni yangi darajaga olib chiqing.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="/account/signup/" class="btn btn-light btn-lg">Hozir boshlash</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/business-landing.js' %}"></script>
+{% endblock %}

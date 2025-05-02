@@ -1,0 +1,454 @@
+{% extends 'base.html' %}
+
+{% block title %}Mening navbatlarim - Navbatim.uz{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="h3 fw-bold mb-4">Mening navbatlarim</h1>
+
+    {% if not user.is_authenticated %}
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="bi bi-calendar-date fs-1 text-muted"></i>
+            </div>
+            <h2 class="h4 fw-bold mb-3">Navbatlaringizni ko'rish uchun tizimga kiring</h2>
+            <p class="text-muted mb-4">Bu sahifada siz o'zingizning barcha navbatlaringizni ko'rishingiz mumkin</p>
+            <a href="{% url 'users:login' %}" class="btn btn-primary">Kirish / Ro'yxatdan o'tish</a>
+        </div>
+    {% else %}
+        <ul class="nav nav-tabs mb-4" id="appointmentTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming" type="button" role="tab" aria-controls="upcoming" aria-selected="true">Kelgusi</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="past-tab" data-bs-toggle="tab" data-bs-target="#past" type="button" role="tab" aria-controls="past" aria-selected="false">O'tgan</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled" type="button" role="tab" aria-controls="cancelled" aria-selected="false">Bekor qilingan</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="appointmentTabsContent">
+            <div class="tab-pane fade show active" id="upcoming" role="tabpanel" aria-labelledby="upcoming-tab">
+                {% if upcoming_appointments %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for appointment in upcoming_appointments %}
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex flex-column flex-md-row">
+                                        <div class="d-flex align-items-center mb-3 mb-md-0 me-md-4">
+                                            <div class="me-3">
+                                                {% if appointment.service.business.logo %}
+                                                    <img src="{{ appointment.service.business.logo.url }}" alt="{{ appointment.service.business.business_name }}" class="rounded" width="64" height="64">
+                                                {% else %}
+                                                    <div class="rounded bg-light d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                                        <i class="bi bi-building fs-3 text-muted"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <h5 class="card-title mb-1">{{ appointment.service.business.business_name }}</h5>
+                                                <p class="text-muted small mb-0">
+                                                    {% with service=appointment.service %}
+                                                        {% if service %}
+                                                            {{ service.category.name }}
+                                                        {% else %}
+                                                            Xizmat ko'rsatuvchi
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex-grow-1 d-flex flex-column flex-md-row gap-2 mb-3 mb-md-0">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-calendar me-2 text-primary"></i>
+                                                <span>{{ appointment.date|date:"d.m.Y" }}</span>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-clock me-2 text-primary"></i>
+                                                <span>{{ appointment.time|time:"H:i" }}</span>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-geo-alt me-2 text-primary"></i>
+                                                <span>{{ appointment.service.business.address }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex flex-column flex-md-row gap-2">
+                                            <a href="tel:{{ appointment.service.business.phone_number }}" class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-telephone me-1"></i> Qo'ng'iroq
+                                            </a>
+                                            <a href="/appointments/reschedule/{{ appointment.id }}" class="btn btn-outline-secondary btn-sm">
+                                                <i class="bi bi-calendar-plus me-1"></i> O'zgartirish
+                                            </a>
+                                            <form action="/appointments/cancel/{{ appointment.id }}/" method="post" class="d-inline" onsubmit="return confirm('Navbatni bekor qilishni xohlaysizmi?');">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-x-circle me-1"></i> Bekor qilish
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-3 pt-3 border-top">
+                                        <h6 class="fw-bold mb-2">Xizmatlar:</h6>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <span class="badge bg-light text-dark">{{ appointment.service.name }} - {{ appointment.service.duration }} daqiqa</span>
+                                        </div>
+
+                                        {% if appointment.notes %}
+                                            <div class="mt-2">
+                                                <h6 class="fw-bold mb-1">Izohlar:</h6>
+                                                <p class="mb-0 small">{{ appointment.notes }}</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if upcoming_appointments.has_other_pages %}
+                        <nav aria-label="Page navigation" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if upcoming_appointments.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1&tab=upcoming" aria-label="First">
+                                            <span aria-hidden="true">&laquo;&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ upcoming_appointments.previous_page_number }}&tab=upcoming" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                {% for i in upcoming_appointments.paginator.page_range %}
+                                    {% if upcoming_appointments.number == i %}
+                                        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                                    {% elif i > upcoming_appointments.number|add:'-3' and i < upcoming_appointments.number|add:'3' %}
+                                        <li class="page-item"><a class="page-link" href="?page={{ i }}&tab=upcoming">{{ i }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if upcoming_appointments.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ upcoming_appointments.next_page_number }}&tab=upcoming" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ upcoming_appointments.paginator.num_pages }}&tab=upcoming" aria-label="Last">
+                                            <span aria-hidden="true">&raquo;&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="bi bi-calendar-plus fs-1 text-muted"></i>
+                        </div>
+                        <h2 class="h4 fw-bold mb-3">Sizda hali kelgusi navbatlar yo'q</h2>
+                        <p class="text-muted mb-4">Xizmat ko'rsatuvchilardan navbat olish uchun katalogni ko'ring</p>
+                        <a href="{% url 'services:service_list' %}" class="btn btn-primary">Katalogni ko'rish</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="tab-pane fade" id="past" role="tabpanel" aria-labelledby="past-tab">
+                {% if past_appointments %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for appointment in past_appointments %}
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex flex-column flex-md-row">
+                                        <div class="d-flex align-items-center mb-3 mb-md-0 me-md-4">
+                                            <div class="me-3">
+                                                {% if appointment.service.business.logo %}
+                                                    <img src="{{ appointment.service.business.logo.url }}" alt="{{ appointment.service.business.business_name }}" class="rounded" width="64" height="64">
+                                                {% else %}
+                                                    <div class="rounded bg-light d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                                        <i class="bi bi-building fs-3 text-muted"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <h5 class="card-title mb-1">{{ appointment.service.business.business_name }}</h5>
+                                                <p class="text-muted small mb-0">
+                                                    {% with service=appointment.service %}
+                                                        {% if service %}
+                                                            {{ service.category.name }}
+                                                        {% else %}
+                                                            Xizmat ko'rsatuvchi
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex-grow-1 d-flex flex-column flex-md-row gap-2 mb-3 mb-md-0">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-calendar-check me-2 text-success"></i>
+                                                <span>{{ appointment.date|date:"d.m.Y" }}</span>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-clock me-2 text-success"></i>
+                                                <span>{{ appointment.time|time:"H:i" }}</span>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-geo-alt me-2 text-success"></i>
+                                                <span>{{ appointment.service.business.address }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex flex-column flex-md-row gap-2">
+                                            {% if not appointment.has_review %}
+                                                <a href="{% url 'services:add_review' business_id=appointment.service.business.id %}" class="btn btn-outline-primary btn-sm">
+                                                    <i class="bi bi-star me-1"></i> Baho berish
+                                                </a>
+                                            {% else %}
+                                                <span class="badge bg-success">Baho berilgan</span>
+                                            {% endif %}
+                                            <a href="{% url 'services:business_detail' pk=appointment.service.business.id %}" class="btn btn-outline-secondary btn-sm">
+                                                <i class="bi bi-building me-1"></i> Biznesni ko'rish
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-3 pt-3 border-top">
+                                        <h6 class="fw-bold mb-2">Xizmatlar:</h6>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <span class="badge bg-light text-dark">{{ appointment.service.name }} - {{ appointment.service.duration }} daqiqa</span>
+                                        </div>
+
+                                        {% if appointment.notes %}
+                                            <div class="mt-2">
+                                                <h6 class="fw-bold mb-1">Izohlar:</h6>
+                                                <p class="mb-0 small">{{ appointment.notes }}</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if past_appointments.has_other_pages %}
+                        <nav aria-label="Page navigation" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if past_appointments.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1&tab=past" aria-label="First">
+                                            <span aria-hidden="true">&laquo;&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ past_appointments.previous_page_number }}&tab=past" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                {% for i in past_appointments.paginator.page_range %}
+                                    {% if past_appointments.number == i %}
+                                        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                                    {% elif i > past_appointments.number|add:'-3' and i < past_appointments.number|add:'3' %}
+                                        <li class="page-item"><a class="page-link" href="?page={{ i }}&tab=past">{{ i }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if past_appointments.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ past_appointments.next_page_number }}&tab=past" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ past_appointments.paginator.num_pages }}&tab=past" aria-label="Last">
+                                            <span aria-hidden="true">&raquo;&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="bi bi-calendar-check fs-1 text-muted"></i>
+                        </div>
+                        <h2 class="h4 fw-bold mb-3">Sizda hali o'tgan navbatlar yo'q</h2>
+                        <p class="text-muted mb-4">Siz hali birorta xizmatdan foydalanmagansiz</p>
+                        <a href="{% url 'services:service_list' %}" class="btn btn-primary">Katalogni ko'rish</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
+                {% if cancelled_appointments %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for appointment in cancelled_appointments %}
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex flex-column flex-md-row">
+                                        <div class="d-flex align-items-center mb-3 mb-md-0 me-md-4">
+                                            <div class="me-3">
+                                                {% if appointment.service.business.logo %}
+                                                    <img src="{{ appointment.service.business.logo.url }}" alt="{{ appointment.service.business.business_name }}" class="rounded" width="64" height="64">
+                                                {% else %}
+                                                    <div class="rounded bg-light d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                                        <i class="bi bi-building fs-3 text-muted"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <h5 class="card-title mb-1">{{ appointment.service.business.business_name }}</h5>
+                                                <p class="text-muted small mb-0">
+                                                    {% with service=appointment.service %}
+                                                        {% if service %}
+                                                            {{ service.category.name }}
+                                                        {% else %}
+                                                            Xizmat ko'rsatuvchi
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex-grow-1 d-flex flex-column flex-md-row gap-2 mb-3 mb-md-0">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-calendar-x me-2 text-danger"></i>
+                                                <span>{{ appointment.date|date:"d.m.Y" }}</span>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-clock me-2 text-danger"></i>
+                                                <span>{{ appointment.time|time:"H:i" }}</span>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-geo-alt me-2 text-danger"></i>
+                                                <span>{{ appointment.service.business.address }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex flex-column flex-md-row gap-2">
+                                            <span class="badge bg-danger">Bekor qilingan</span>
+                                            <a href="/appointments/book/{{ appointment.service.id }}/" class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-calendar-plus me-1"></i> Qayta navbat olish
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-3 pt-3 border-top">
+                                        <h6 class="fw-bold mb-2">Xizmatlar:</h6>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <span class="badge bg-light text-dark">{{ appointment.service.name }} - {{ appointment.service.duration }} daqiqa</span>
+                                        </div>
+
+                                        {% if appointment.notes %}
+                                            <div class="mt-2">
+                                                <h6 class="fw-bold mb-1">Izohlar:</h6>
+                                                <p class="mb-0 small">{{ appointment.notes }}</p>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if appointment.cancellation_reason %}
+                                            <div class="mt-2">
+                                                <h6 class="fw-bold mb-1 text-danger">Bekor qilish sababi:</h6>
+                                                <p class="mb-0 small">{{ appointment.cancellation_reason }}</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if cancelled_appointments.has_other_pages %}
+                        <nav aria-label="Page navigation" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if cancelled_appointments.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1&tab=cancelled" aria-label="First">
+                                            <span aria-hidden="true">&laquo;&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ cancelled_appointments.previous_page_number }}&tab=cancelled" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                {% for i in cancelled_appointments.paginator.page_range %}
+                                    {% if cancelled_appointments.number == i %}
+                                        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                                    {% elif i > cancelled_appointments.number|add:'-3' and i < cancelled_appointments.number|add:'3' %}
+                                        <li class="page-item"><a class="page-link" href="?page={{ i }}&tab=cancelled">{{ i }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if cancelled_appointments.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ cancelled_appointments.next_page_number }}&tab=cancelled" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ cancelled_appointments.paginator.num_pages }}&tab=cancelled" aria-label="Last">
+                                            <span aria-hidden="true">&raquo;&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="bi bi-calendar-x fs-1 text-muted"></i>
+                        </div>
+                        <h2 class="h4 fw-bold mb-3">Sizda bekor qilingan navbatlar yo'q</h2>
+                        <p class="text-muted mb-4">Siz hali birorta navbatni bekor qilmagansiz</p>
+                        <a href="{% url 'services:service_list' %}" class="btn btn-primary">Katalogni ko'rish</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- JavaScript to maintain tab state after page reload -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get the tab parameter from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const tab = urlParams.get('tab');
+
+                // If tab parameter exists, activate that tab
+                if (tab) {
+                    const tabElement = document.querySelector(`#${tab}-tab`);
+                    if (tabElement) {
+                        const tabTrigger = new bootstrap.Tab(tabElement);
+                        tabTrigger.show();
+                    }
+                }
+
+                // Add click event listeners to tabs to update URL
+                const tabs = document.querySelectorAll('button[data-bs-toggle="tab"]');
+                tabs.forEach(tab => {
+                    tab.addEventListener('shown.bs.tab', function(event) {
+                        const id = event.target.id.replace('-tab', '');
+                        const url = new URL(window.location);
+                        url.searchParams.set('tab', id);
+                        url.searchParams.delete('page'); // Reset page when changing tabs
+                        window.history.replaceState({}, '', url);
+                    });
+                });
+            });
+        </script>
+    {% endif %}
+</div>
+{% endblock %}

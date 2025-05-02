@@ -1,0 +1,251 @@
+{% extends 'business/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Appointments | {{ business.business_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Filter Appointments</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="date_from" class="form-label">From Date</label>
+                            <input type="date" name="date_from" id="date_from" value="{{ date_from|default:'' }}" class="form-control">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="date_to" class="form-label">To Date</label>
+                            <input type="date" name="date_to" id="date_to" value="{{ date_to|default:'' }}" class="form-control">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select name="status" id="status" class="form-select">
+                                <option value="">All Statuses</option>
+                                <option value="pending" {% if status == "pending" %}selected{% endif %}>Pending</option>
+                                <option value="confirmed" {% if status == "confirmed" %}selected{% endif %}>Confirmed</option>
+                                <option value="completed" {% if status == "completed" %}selected{% endif %}>Completed</option>
+                                <option value="cancelled" {% if status == "cancelled" %}selected{% endif %}>Cancelled</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="service" class="form-label">Service</label>
+                            <select name="service" id="service" class="form-select">
+                                <option value="">All Services</option>
+                                {% for service in services %}
+                                <option value="{{ service.id }}" {% if service_id == service.id|stringformat:"i" %}selected{% endif %}>{{ service.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            <a href="/business/appointments/" class="btn btn-outline-secondary ms-2">Reset</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Appointments</h5>
+                    <div class="btn-group">
+                        <a href="?sort=date{% if sort_by == 'date' %}&order={% if order == 'asc' %}desc{% else %}asc{% endif %}{% endif %}" class="btn btn-sm btn-outline-secondary">
+                            Date {% if sort_by == 'date' %}{% if order == 'asc' %}<i class="bi bi-arrow-up"></i>{% else %}<i class="bi bi-arrow-down"></i>{% endif %}{% endif %}
+                        </a>
+                        <a href="?sort=client{% if sort_by == 'client' %}&order={% if order == 'asc' %}desc{% else %}asc{% endif %}{% endif %}" class="btn btn-sm btn-outline-secondary">
+                            Client {% if sort_by == 'client' %}{% if order == 'asc' %}<i class="bi bi-arrow-up"></i>{% else %}<i class="bi bi-arrow-down"></i>{% endif %}{% endif %}
+                        </a>
+                        <a href="?sort=service{% if sort_by == 'service' %}&order={% if order == 'asc' %}desc{% else %}asc{% endif %}{% endif %}" class="btn btn-sm btn-outline-secondary">
+                            Service {% if sort_by == 'service' %}{% if order == 'asc' %}<i class="bi bi-arrow-up"></i>{% else %}<i class="bi bi-arrow-down"></i>{% endif %}{% endif %}
+                        </a>
+                        <a href="?sort=status{% if sort_by == 'status' %}&order={% if order == 'asc' %}desc{% else %}asc{% endif %}{% endif %}" class="btn btn-sm btn-outline-secondary">
+                            Status {% if sort_by == 'status' %}{% if order == 'asc' %}<i class="bi bi-arrow-up"></i>{% else %}<i class="bi bi-arrow-down"></i>{% endif %}{% endif %}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    {% if appointments %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Client</th>
+                                    <th>Date & Time</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in appointments %}
+                                <tr class="{% if appointment.date == today %}table-warning{% endif %}">
+                                    <td>{{ appointment.service.name }}</td>
+                                    <td>{{ appointment.client.get_full_name|default:appointment.client.username }}</td>
+                                    <td>
+                                        <span class="d-block">{{ appointment.date|date:"F j, Y" }}</span>
+                                        <small class="text-muted">{{ appointment.time|time:"g:i A" }}</small>
+                                    </td>
+                                    <td>{{ appointment.service.duration }} min</td>
+                                    <td>
+                                        <span class="badge
+                                            {% if appointment.status == 'pending' %}bg-warning
+                                            {% elif appointment.status == 'confirmed' %}bg-primary
+                                            {% elif appointment.status == 'completed' %}bg-success
+                                            {% elif appointment.status == 'cancelled' %}bg-danger
+                                            {% endif %}">
+                                            {{ appointment.status|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <select class="form-select form-select-sm status-select" data-appointment-id="{{ appointment.id }}">
+                                            <option value="pending" {% if appointment.status == 'pending' %}selected{% endif %}>Pending</option>
+                                            <option value="confirmed" {% if appointment.status == 'confirmed' %}selected{% endif %}>Confirm</option>
+                                            <option value="completed" {% if appointment.status == 'completed' %}selected{% endif %}>Complete</option>
+                                            <option value="cancelled" {% if appointment.status == 'cancelled' %}selected{% endif %}>Cancel</option>
+                                        </select>
+
+                                        {% if appointment.notes %}
+                                        <button type="button" class="btn btn-sm btn-outline-info mt-2" data-bs-toggle="tooltip" title="{{ appointment.notes }}">
+                                            <i class="bi bi-info-circle"></i> Notes
+                                        </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if appointments.has_other_pages %}
+                    <div class="card-footer">
+                        <nav>
+                            <ul class="pagination justify-content-center mb-0">
+                                {% if appointments.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ appointments.previous_page_number }}{% if status %}&status={{ status }}{% endif %}{% if service_id %}&service={{ service_id }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">
+                                        Previous
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                {% for i in appointments.paginator.page_range %}
+                                    {% if appointments.number == i %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ i }}</span>
+                                    </li>
+                                    {% elif i > appointments.number|add:'-3' and i < appointments.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ i }}{% if status %}&status={{ status }}{% endif %}{% if service_id %}&service={{ service_id }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">{{ i }}</a>
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if appointments.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ appointments.next_page_number }}{% if status %}&status={{ status }}{% endif %}{% if service_id %}&service={{ service_id }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">
+                                        Next
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                    {% endif %}
+
+                    {% else %}
+                    <div class="text-center p-4">
+                        <p class="text-muted mb-0">No appointments found.</p>
+                        <p class="text-muted small">Try adjusting your filters or check back later.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
+        // Handle status changes
+        const statusSelects = document.querySelectorAll('.status-select');
+        statusSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                const appointmentId = this.dataset.appointmentId;
+                const newStatus = this.value;
+
+                // Send AJAX request to update status
+                fetch(`/business/appointments/update/${appointmentId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: `status=${newStatus}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the status badge
+                        const statusBadge = this.closest('tr').querySelector('.badge');
+                        statusBadge.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+
+                        // Update badge color
+                        statusBadge.className = 'badge';
+                        if (newStatus === 'pending') {
+                            statusBadge.classList.add('bg-warning');
+                        } else if (newStatus === 'confirmed') {
+                            statusBadge.classList.add('bg-primary');
+                        } else if (newStatus === 'completed') {
+                            statusBadge.classList.add('bg-success');
+                        } else if (newStatus === 'cancelled') {
+                            statusBadge.classList.add('bg-danger');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating appointment status:', error);
+                });
+            });
+        });
+
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>
+{% endblock %}

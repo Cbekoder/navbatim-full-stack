@@ -1,0 +1,501 @@
+{% extends 'business/base_dashboard.html' %}
+
+{% block title %}Dashboard - Navbatim.uz{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0">Dashboard</h1>
+        <p class="text-muted">Biznesingiz haqida umumiy ma'lumotlar</p>
+    </div>
+    <div>
+        <button class="btn btn-primary">
+            <i class="bi bi-download me-2"></i> Hisobotni yuklab olish
+        </button>
+    </div>
+</div>
+
+<!-- Congratulations Card -->
+<div class="card bg-dark text-white mb-4">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="card-title">Tabriklaymiz {{ user.first_name }}! 🎉</h2>
+                <p class="card-text">Siz bu oyning eng yaxshi xizmat ko'rsatuvchisisiz</p>
+                <h3 class="display-6">{{ total_revenue|floatformat:0 }} so'm</h3>
+                <p class="text-muted">{{ revenue_percentage }}% oylik maqsaddan</p>
+                <button class="btn btn-light">Batafsil ma'lumot</button>
+            </div>
+            <div class="col-md-4 text-center">
+                <img src="{{ STATIC_URL }}img/achievement.png" alt="Achievement" class="img-fluid" style="max-height: 150px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Jami navbatlar</h6>
+                        <h3 class="mb-0">{{ total_appointments }}</h3>
+                        <span class="badge bg-success text-white">+{{ appointment_percentage }}%</span>
+                    </div>
+                    <div class="icon-box bg-primary bg-opacity-10 text-primary rounded p-3">
+                        <i class="bi bi-calendar-check fs-4"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <canvas id="appointmentsChart" height="50"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Jami daromad</h6>
+                        <h3 class="mb-0">{{ total_revenue|floatformat:0 }} so'm</h3>
+                        <span class="badge bg-success text-white">+{{ revenue_percentage }}%</span>
+                    </div>
+                    <div class="icon-box bg-success bg-opacity-10 text-success rounded p-3">
+                        <i class="bi bi-currency-dollar fs-4"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <canvas id="revenueChart" height="50"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Jami tashriflar</h6>
+                        <h3 class="mb-0">{{ total_visits }}</h3>
+                        <span class="badge bg-danger text-white">-{{ visit_percentage }}%</span>
+                    </div>
+                    <div class="icon-box bg-info bg-opacity-10 text-info rounded p-3">
+                        <i class="bi bi-eye fs-4"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <canvas id="visitsChart" height="50"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Qaytish darajasi</h6>
+                        <h3 class="mb-0">{{ bounce_rate }}%</h3>
+                        <span class="badge bg-success text-white">+{{ bounce_rate_percentage }}%</span>
+                    </div>
+                    <div class="icon-box bg-warning bg-opacity-10 text-warning rounded p-3">
+                        <i class="bi bi-arrow-repeat fs-4"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <canvas id="bounceRateChart" height="50"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Navbat holati</h5>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="orderStatusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Bu hafta
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="orderStatusDropdown">
+                        <li><a class="dropdown-item" href="#">Bugun</a></li>
+                        <li><a class="dropdown-item" href="#">Bu hafta</a></li>
+                        <li><a class="dropdown-item" href="#">Bu oy</a></li>
+                        <li><a class="dropdown-item" href="#">Bu yil</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-center">
+                    <div style="position: relative; width: 300px; height: 300px;">
+                        <canvas id="orderStatusChart"></canvas>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                            <h3 class="mb-0">68%</h3>
+                            <p class="mb-0 text-muted">Jami navbatlar</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center">
+                            <span class="badge rounded-pill bg-primary me-2">&nbsp;</span>
+                            <span>Navbatlar</span>
+                        </div>
+                        <span class="fw-bold">68%</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center">
+                            <span class="badge rounded-pill bg-danger me-2">&nbsp;</span>
+                            <span>Xizmatlar</span>
+                        </div>
+                        <span class="fw-bold">25%</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <span class="badge rounded-pill bg-success me-2">&nbsp;</span>
+                            <span>Daromad</span>
+                        </div>
+                        <span class="fw-bold">14%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{#    <div class="col-md-6">#}
+{#        <div class="card border-0 shadow-sm">#}
+{#            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">#}
+{#                <h5 class="card-title mb-0">Sotuvlar va ko'rishlar</h5>#}
+{#                <div class="dropdown">#}
+{#                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="salesViewsDropdown" data-bs-toggle="dropdown" aria-expanded="false">#}
+{#                        Bu yil#}
+{#                    </button>#}
+{#                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="salesViewsDropdown">#}
+{#                        <li><a class="dropdown-item" href="#">Bu oy</a></li>#}
+{#                        <li><a class="dropdown-item" href="#">Bu yil</a></li>#}
+{#                        <li><a class="dropdown-item" href="#">O'tgan yil</a></li>#}
+{#                    </ul>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="card-body">#}
+{#                <canvas id="salesViewsChart" height="300"></canvas>#}
+{#                #}
+{#                <div class="row mt-4">#}
+{#                    <div class="col-md-6 border-end">#}
+{#                        <div class="text-center">#}
+{#                            <h6 class="text-muted mb-2">Oylik</h6>#}
+{#                            <div class="d-flex align-items-center justify-content-center">#}
+{#                                <div class="chart-circle bg-primary">#}
+{#                                    <span class="chart-circle-inner">16.5%</span>#}
+{#                                </div>#}
+{#                                <div class="ms-3 text-start">#}
+{#                                    <h4 class="mb-0">65,127</h4>#}
+{#                                    <small class="text-muted">55.21 USD</small>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="col-md-6">#}
+{#                        <div class="text-center">#}
+{#                            <h6 class="text-muted mb-2">Yillik</h6>#}
+{#                            <div class="d-flex align-items-center justify-content-center">#}
+{#                                <div class="chart-circle bg-warning">#}
+{#                                    <span class="chart-circle-inner">24.9%</span>#}
+{#                                </div>#}
+{#                                <div class="ms-3 text-start">#}
+{#                                    <h4 class="mb-0">984,246</h4>#}
+{#                                    <small class="text-muted">267.35 USD</small>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+</div>
+
+<!-- Tables Row -->
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Mashhur xizmatlar</h5>
+                <button class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-three-dots"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Xizmat nomi</th>
+                                <th>Narxi</th>
+                                <th>Sotilgan</th>
+                                <th>Daromad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for service in popular_services %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="service-icon bg-light rounded p-2 me-2">
+                                            <i class="bi bi-scissors"></i>
+                                        </div>
+                                        <span>{{ service.name }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ service.price|floatformat:0 }} so'm</td>
+                                <td>{{ service.sold_count }}</td>
+                                <td>{{ service.total_revenue|floatformat:0 }} so'm</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">Hozircha ma'lumotlar yo'q</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Eng yaxshi mijozlar</h5>
+                <button class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-three-dots"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Mijoz</th>
+                                <th>Navbatlar</th>
+                                <th>Xarajat</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for client in top_clients %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if client.user.profile_picture %}
+                                            <img src="{{ client.user.profile_picture.url }}" alt="{{ client.user.get_full_name }}" width="32" height="32" class="rounded-circle me-2">
+                                        {% else %}
+                                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                                <span class="fw-bold">{{ client.user.first_name|first }}{{ client.user.last_name|first }}</span>
+                                            </div>
+                                        {% endif %}
+                                        <span>{{ client.user.get_full_name }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ client.appointment_count }}</td>
+                                <td>{{ client.total_spent|floatformat:0 }} so'm</td>
+                                <td>
+                                    <span class="badge bg-success">Doimiy mijoz</span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">Hozircha ma'lumotlar yo'q</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Small charts for stats cards
+        const appointmentsChartCtx = document.getElementById('appointmentsChart').getContext('2d');
+        const revenueChartCtx = document.getElementById('revenueChart').getContext('2d');
+        const visitsChartCtx = document.getElementById('visitsChart').getContext('2d');
+        const bounceRateChartCtx = document.getElementById('bounceRateChart').getContext('2d');
+        
+        // Common configuration for small charts
+        const smallChartConfig = {
+            type: 'line',
+            options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                scales: {
+                    x: {
+                        display: false
+                    },
+                    y: {
+                        display: false
+                    }
+                },
+                elements: {
+                    line: {
+                        tension: 0.4,
+                        borderWidth: 2
+                    },
+                    point: {
+                        radius: 0
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        };
+        
+        // Appointments Chart
+        new Chart(appointmentsChartCtx, {
+            ...smallChartConfig,
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    fill: true
+                }]
+            }
+        });
+        
+        // Revenue Chart
+        new Chart(revenueChartCtx, {
+            ...smallChartConfig,
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    data: [28, 48, 40, 19, 86, 27, 90],
+                    borderColor: '#198754',
+                    backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                    fill: true
+                }]
+            }
+        });
+        
+        // Visits Chart
+        new Chart(visitsChartCtx, {
+            ...smallChartConfig,
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    data: [45, 25, 40, 20, 60, 20, 35],
+                    borderColor: '#0dcaf0',
+                    backgroundColor: 'rgba(13, 202, 240, 0.1)',
+                    fill: true
+                }]
+            }
+        });
+        
+        // Bounce Rate Chart
+        new Chart(bounceRateChartCtx, {
+            ...smallChartConfig,
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    data: [12, 19, 3, 5, 2, 3, 9],
+                    borderColor: '#ffc107',
+                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                    fill: true
+                }]
+            }
+        });
+        
+        // Order Status Chart (Doughnut)
+        const orderStatusChartCtx = document.getElementById('orderStatusChart').getContext('2d');
+        new Chart(orderStatusChartCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Navbatlar', 'Xizmatlar', 'Daromad'],
+                datasets: [{
+                    data: [68, 25, 14],
+                    backgroundColor: ['#0d6efd', '#dc3545', '#198754'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        
+        // Sales & Views Chart (Bar)
+        const salesViewsChartCtx = document.getElementById('salesViewsChart').getContext('2d');
+        new Chart(salesViewsChartCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                datasets: [
+                    {
+                        label: 'Sotuvlar',
+                        data: [20, 10, 55, 15, 30, 20, 30, 15, 35],
+                        backgroundColor: '#ffc107',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Ko\'rishlar',
+                        data: [15, 20, 45, 20, 25, 15, 20, 10, 30],
+                        backgroundColor: '#0dcaf0',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        }
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    });
+</script>
+{% endblock %}

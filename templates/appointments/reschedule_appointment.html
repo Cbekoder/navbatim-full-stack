@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Navbatim.uz - Navbatni qayta rejalashtirish{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0">Navbatni qayta rejalashtirish</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>{{ appointment.business.business_name }}</h5>
+                        <p><strong>Xizmat:</strong> {{ appointment.service.name }}</p>
+                        <p><strong>Joriy sana:</strong> {{ appointment.date|date:"j F, Y" }} {{ appointment.time|time:"H:i" }}</p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a href="{% url 'appointment_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Orqaga
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                Qayta rejalashtirish <i class="bi bi-calendar-check"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

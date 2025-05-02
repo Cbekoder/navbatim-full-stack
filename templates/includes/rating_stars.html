@@ -1,0 +1,22 @@
+{% comment %}
+This template displays star ratings from 0 to 5 (supports decimals)
+Usage: {% include 'includes/rating_stars.html' with rating=business.rating %}
+{% endcomment %}
+
+{% if rating %}
+    {% with int_rating=rating|floatformat:0|add:"0" %}
+        {% for i in "12345" %}
+            {% with i_val=i|add:"0" %}
+                {% if i_val <= int_rating %}
+                    <i class="bi bi-star-fill text-warning"></i>
+                {% elif i_val == int_rating|add:"1" and rating > int_rating %}
+                    <i class="bi bi-star-half text-warning"></i>
+                {% else %}
+                    <i class="bi bi-star text-warning"></i>
+                {% endif %}
+            {% endwith %}
+        {% endfor %}
+    {% endwith %}
+{% else %}
+    <span class="text-muted">No ratings yet</span>
+{% endif %}

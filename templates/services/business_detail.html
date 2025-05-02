@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ business.business_name }} - Navbatim.uz{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Business Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            {% if business.logo %}
+                                <img src="{{ business.logo.url }}" alt="{{ business.business_name }}" class="rounded" width="80" height="80">
+                            {% else %}
+                                <div class="rounded bg-light d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                    <i class="bi bi-building fs-2 text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <div class="d-flex align-items-center mb-2">
+                                <h1 class="h3 fw-bold mb-0 me-2">{{ business.business_name }}</h1>
+                                {% if business.is_premium %}
+                                    <span class="badge bg-warning text-dark">Premium</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-flex align-items-center text-muted mb-2">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                <span>{{ business.address }}, {{ business.city }}</span>
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>
+                                    <span>{{ avg_rating|floatformat:1 }}</span>
+                                    <span class="text-muted">({{ reviews.count }} baho)</span>
+                                </div>
+
+                                {% if user.is_authenticated %}
+                                    {% if is_favorite %}
+                                        <a href="{% url 'services:remove_favorite' business_id=business.id %}?next={{ request.path }}" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-heart-fill me-1"></i> Sevimlilardan olib tashlash
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'services:add_favorite' business_id=business.id %}?next={{ request.path }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-heart me-1"></i> Sevimlilarga qo'shish
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Business Description -->
+            {% if business.description %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h5 fw-bold mb-3">Biznes haqida</h2>
+                    <p>{{ business.description }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Services -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h5 fw-bold mb-3">Xizmatlar</h2>
+
+                    {% if services %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Xizmat nomi</th>
+                                        <th>Davomiyligi</th>
+                                        <th>Narxi</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for service in services %}
+                                    <tr>
+                                        <td>
+                                            <div class="fw-medium">{{ service.name }}</div>
+                                            {% if service.description %}
+                                                <small class="text-muted">{{ service.description }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ service.duration }} daqiqa</td>
+                                        <td>{{ service.price }} so'm</td>
+                                        <td>
+                                            <a href="/appointments/book/{{ service.id }}" class="btn btn-primary btn-sm">Band qilish</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Hozircha xizmatlar yo'q</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Reviews -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h5 fw-bold mb-3">Sharhlar</h2>
+
+                    {% if user.is_authenticated %}
+                        <div class="mb-4">
+                            <form method="post" action="{% url 'services:add_review' business_id=business.id %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="id_rating" class="form-label">Baholash</label>
+                                    <select name="rating" id="id_rating" class="form-select">
+                                        <option value="5">5 - A'lo</option>
+                                        <option value="4">4 - Yaxshi</option>
+                                        <option value="3">3 - O'rtacha</option>
+                                        <option value="2">2 - Yomon</option>
+                                        <option value="1">1 - Juda yomon</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="id_comment" class="form-label">Sharh</label>
+                                    <textarea name="comment" id="id_comment" rows="3" class="form-control" placeholder="Fikringizni yozing..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Sharh qoldirish</button>
+                            </form>
+                        </div>
+                    {% endif %}
+
+                    {% if reviews %}
+                        <div class="d-flex flex-column gap-3">
+                            {% for review in reviews %}
+                            <div class="border-bottom pb-3 {% if forloop.last %}border-0 pb-0{% endif %}">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <span class="fw-medium">{{ review.user.get_full_name|default:review.user.username }}</span>
+                                        <span class="text-muted ms-2">{{ review.created_at|date:"d.m.Y" }}</span>
+                                    </div>
+                                    <div>
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            {% else %}
+                                                <i class="bi bi-star text-warning"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <p class="mb-0">{{ review.comment }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Hozircha sharhlar yo'q</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Business Hours -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h5 fw-bold mb-3">Ish vaqti</h2>
+
+                    <ul class="list-group list-group-flush">
+                        {% for day_num, day_name in days_of_week %}
+                            <li class="list-group-item px-0">
+                                <div class="d-flex justify-content-between">
+                                    <span>{{ day_name }}</span>
+                                    {% if day_num in hours_by_day %}
+                                        {% with day_hours=hours_by_day|get_item:day_num %}
+                                            {% if day_hours.is_closed %}
+                                                <span class="text-danger">Yopiq</span>
+                                            {% else %}
+                                                <span>{{ day_hours.opening_time|time:"H:i" }} - {{ day_hours.closing_time|time:"H:i" }}</span>
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% else %}
+                                        <span class="text-muted">Ma'lumot yo'q</span>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h5 fw-bold mb-3">Aloqa ma'lumotlari</h2>
+
+                    <ul class="list-unstyled">
+                        {% if business.phone_number %}
+                        <li class="mb-2">
+                            <div class="d-flex">
+                                <i class="bi bi-telephone me-2 text-primary"></i>
+                                <a href="tel:{{ business.phone_number }}" class="text-decoration-none">{{ business.phone_number }}</a>
+                            </div>
+                        </li>
+                        {% endif %}
+
+                        {% if business.website %}
+                        <li class="mb-2">
+                            <div class="d-flex">
+                                <i class="bi bi-globe me-2 text-primary"></i>
+                                <a href="{{ business.website }}" target="_blank" class="text-decoration-none">{{ business.website }}</a>
+                            </div>
+                        </li>
+                        {% endif %}
+
+                        {% if business.address %}
+                        <li>
+                            <div class="d-flex">
+                                <i class="bi bi-geo-alt me-2 text-primary"></i>
+                                <span>{{ business.address }}, {{ business.city }}</span>
+                            </div>
+                        </li>
+                        {% endif %}
+                    </ul>
+
+                    {% if business.latitude and business.longitude %}
+                    <div class="mt-3">
+                        <div id="map" style="height: 200px; border-radius: 0.375rem;"></div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if business.latitude and business.longitude %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var map = L.map('map').setView([{{ business.latitude }}, {{ business.longitude }}], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        L.marker([{{ business.latitude }}, {{ business.longitude }}])
+            .addTo(map)
+            .bindPopup('{{ business.business_name }}')
+            .openPopup();
+    });
+</script>
+{% endif %}
+{% endblock %}

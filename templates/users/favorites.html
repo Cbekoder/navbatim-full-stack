@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}Sevimlilar - Navbatim.uz{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 fw-bold mb-4">Sevimli bizneslar</h1>
+            
+            {% if favorites %}
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <p class="text-muted mb-0">{{ favorites|length }} ta biznes</p>
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-sort-down"></i> Saralash
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+                            <li><a class="dropdown-item {% if sort == 'name' %}active{% endif %}" href="?sort=name">Nomi bo'yicha</a></li>
+                            <li><a class="dropdown-item {% if sort == 'rating' %}active{% endif %}" href="?sort=rating">Reyting bo'yicha</a></li>
+                            <li><a class="dropdown-item {% if sort == 'date' %}active{% endif %}" href="?sort=date">Qo'shilgan sana bo'yicha</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    {% for favorite in favorites %}
+                        <div class="col">
+                            <div class="card h-100 border-0 shadow-sm">
+                                {% if favorite.business.logo %}
+                                    <img src="{{ favorite.business.logo.url }}" class="card-img-top" alt="{{ favorite.business.business_name }}" style="height: 180px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-light text-center py-5">
+                                        <i class="bi bi-building fs-1 text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h2 class="card-title h5 fw-bold mb-0">{{ favorite.business.business_name }}</h2>
+                                        <form method="post" action="{% url 'services:remove_favorite' business_id=favorite.business.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Sevimlilardan o'chirish">
+                                                <i class="bi bi-heart-fill"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        {% for category in favorite.business.categories.all %}
+                                            <span class="badge bg-light text-dark me-1">{{ category.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="me-2">
+                                            {% with avg_rating=favorite.business.services.all|join:', '|default:'0'|stringformat:'s'|add:'.0'|slice:':3' %}
+                                                {% if avg_rating != '0.0' %}
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="text-warning me-1">
+                                                            <i class="bi bi-star-fill"></i>
+                                                        </span>
+                                                        <span class="fw-bold">{{ avg_rating }}</span>
+                                                    </div>
+                                                {% else %}
+                                                    <span class="text-muted">Baholanmagan</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                        <div class="text-muted small">
+                                            <i class="bi bi-geo-alt"></i> {{ favorite.business.city }}
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="card-text text-muted small mb-3">
+                                        {{ favorite.business.description|truncatechars:100 }}
+                                    </p>
+                                    
+                                    <a href="{% url 'services:business_detail' pk=favorite.business.id %}" class="btn btn-primary w-100">
+                                        Batafsil
+                                    </a>
+                                </div>
+                                
+                                <div class="card-footer bg-white border-0 pt-0">
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock"></i> {{ favorite.created_at|date:"d.m.Y" }} da qo'shilgan
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                {% if favorites.has_other_pages %}
+                    <nav class="mt-5" aria-label="Pagination">
+                        <ul class="pagination justify-content-center">
+                            {% if favorites.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1{% if sort %}&sort={{ sort }}{% endif %}" aria-label="First">
+                                        <span aria-hidden="true">&laquo;&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ favorites.previous_page_number }}{% if sort %}&sort={{ sort }}{% endif %}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for i in favorites.paginator.page_range %}
+                                {% if favorites.number == i %}
+                                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                                {% elif i > favorites.number|add:'-3' and i < favorites.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ i }}{% if sort %}&sort={{ sort }}{% endif %}">{{ i }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if favorites.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ favorites.next_page_number }}{% if sort %}&sort={{ sort }}{% endif %}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ favorites.paginator.num_pages }}{% if sort %}&sort={{ sort }}{% endif %}" aria-label="Last">
+                                        <span aria-hidden="true">&raquo;&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+                
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-heart text-danger" style="font-size: 4rem;"></i>
+                    </div>
+                    <h2 class="h4 fw-bold mb-3">Sevimli bizneslar yo'q</h2>
+                    <p class="text-muted mb-4">Siz hali hech qanday biznesni sevimlilar ro'yxatiga qo'shmagansiz.</p>
+                    <a href="{% url 'services:service_list' %}" class="btn btn-primary">
+                        <i class="bi bi-search me-2"></i> Bizneslarni ko'rish
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
