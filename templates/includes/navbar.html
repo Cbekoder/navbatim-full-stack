@@ -5,14 +5,14 @@
                 <h2 class="h5 mb-3">O'zbekistonda onlayn navbat olish</h2>
                 <form action="/services/" method="get" class="position-relative">
                     <input type="text" name="q" class="form-control form-control-lg ps-4" placeholder="Xizmat, kompaniya yoki mutaxassis" aria-label="Search">
-                    <button type="submit" class="btn position-absolute top-50 end-0 translate-middle-y me-2">
+                    <button type="submit" class="btn bg-white position-absolute top-50 end-0 translate-middle-y me-2">
                         <i class="bi bi-search text-muted"></i>
                     </button>
                 </form>
             </div>
 
             <div class="py-3">
-                <div class="row row-cols-4 row-cols-md-7 g-3">
+                <div class="row row-cols-3 row-cols-sm-4 row-cols-md-6 g-3">
                     {% for category in global_categories %}
                     <div class="col">
                         <a href="/services/category/{{category.slug}}" class="text-decoration-none">
