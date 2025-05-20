@@ -25,17 +25,17 @@ body {
 
 /* Navigation - Updated for Sticky and Minimize Behavior */
 .nav-tabs {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  /*position: sticky;*/
+  /*top: 0;*/
+  /*z-index: 1000;  */
   background-color: var(--light);
   transition: height 0.3s ease, padding 0.3s ease;
-  height: 60px; /* Default height */
+  height: 40px; /* Default height */
   overflow: hidden;
 }
 
 .nav-tabs.minimized {
-  height: 40px; /* Minimized height */
+  height: 60px; /* Minimized height */
   padding: 0.25rem 0;
 }
 
@@ -49,7 +49,7 @@ body {
 
 .nav-tabs.minimized .nav-link {
   padding: 0.25rem 0.5rem;
-  font-size: 0.875rem; /* Slightly smaller text when minimized */
+  font-size: 0.65rem; /* Slightly smaller text when minimized */
 }
 
 .nav-tabs .nav-link:hover {
