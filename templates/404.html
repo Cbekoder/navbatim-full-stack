@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Sahifa topilmadi - Navbatim.uz{% endblock %}
+
+{% block content %}
+<div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 60vh;">
+    <div class="text-center">
+        <img src="{% static 'img/404-error.png' %}" alt="404" style="max-width: 320px; width: 100%;" class="mb-4">
+        <h1 class="display-4 fw-bold mb-3">404</h1>
+        <h2 class="h4 mb-3">Sahifa topilmadi</h2>
+        <p class="mb-4 text-muted">Kechirasiz, siz izlagan sahifa mavjud emas yoki ko'chirilgan.</p>
+        <a href="/" class="btn btn-primary px-4 py-2">Bosh sahifaga qaytish</a>
+    </div>
+</div>
+{% endblock %}
+

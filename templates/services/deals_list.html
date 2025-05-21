@@ -18,9 +18,9 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 shadow-sm">
                         {% if deal.image %}
-                            <img src="{{ deal.service.business.logo.url }}" alt="{{ deal.title }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                            <img src="{{ deal.image.url }}" alt="{{ deal.title }}" class="card-img-top" style="height: 200px; object-fit: cover;">
                         {% else %}
-                            <img src="{% static 'img/default-deal.jpg' %}" alt="{{ deal.title }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+{#                            <img src="{% static 'img/default-deal.jpg' %}" alt="{{ deal.title }}" class="card-img-top" style="height: 200px; object-fit: cover;">#}
                         {% endif %}
                         <div class="card-body">
                             <div class="badge bg-danger mb-2">{{ deal.discount }}% chegirma</div>

@@ -1,3 +1,4 @@
+{% load static %}
 <div>
     <div class="bg-gradient-primary text-white">
         <div class="container">
@@ -12,13 +13,13 @@
             </div>
 
             <div class="py-3">
-                <div class="row row-cols-3 row-cols-sm-4 row-cols-md-6 g-3">
+                <div class="row row-cols-3 row-cols-sm-4 row-cols-md-6 g-5">
                     {% for category in global_categories %}
                     <div class="col">
                         <a href="/services/category/{{category.slug}}" class="text-decoration-none">
                             <div class="d-flex flex-column align-items-center">
                                 <div class="rounded p-3 mb-2 bg-light bg-opacity-25 text-white ">
-                                    <i class="bi bi-{{ category.icon }} fs-5"></i>
+                                    <i class="bi bi-{{ category.icon }} fs-4"></i>
                                 </div>
                                 <span class="text-white small text-center">{{ category.name }}</span>
                             </div>
@@ -50,7 +51,10 @@
                     <a class="nav-link {% if request.path == '/services/' %}active{% endif %}" href="/services/">Katalog</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/services/deals/' %}active{% endif %}" href="/services/deals/">Aksiyalar</a>
+                    <a class="nav-link {% if request.path == '/services/deals/' %}active{% endif %}" href="/services/deals/">
+                        Aksiyalar
+                        <img src="{% static 'img/hot-sale.png' %}" alt="Hot Sale" style="height: 1.5em; vertical-align: top;">
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if request.path == '/services/map/' %}active{% endif %}" href="/services/map/">Xaritada</a>

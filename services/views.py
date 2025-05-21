@@ -127,26 +127,31 @@ def category_detail(request, slug):
 
 @login_required
 def add_favorite(request, business_id):
-    business = get_object_or_404(BusinessProfile, id=business_id)
-    user = request.user
+    if not request.user.is_authenticated:
+        business = get_object_or_404(BusinessProfile, id=business_id)
+        user = request.user
 
-    if business not in Favorite.objects.filter(user=user).values_list('business', flat=True):
-        Favorite.objects.create(user=user, business=business)
+        if business not in Favorite.objects.filter(user=user).values_list('business', flat=True):
+            Favorite.objects.create(user=user, business=business)
 
-    next_url = request.GET.get('next', reverse('services:service_list'))
-    return HttpResponseRedirect(next_url)
+        next_url = request.GET.get('next', reverse('services:service_list'))
+        return HttpResponseRedirect(next_url)
+    return redirect('account_login')
+
 
 
 @login_required
 def remove_favorite(request, business_id):
-    business = get_object_or_404(BusinessProfile, id=business_id)
-    user = request.user
+    if not request.user.is_authenticated:
+        business = get_object_or_404(BusinessProfile, id=business_id)
+        user = request.user
 
-    if business in user.favorites.all():
-        user.favorites.remove(business)
+        if business in user.favorites.all():
+            user.favorites.remove(business)
 
-    next_url = request.GET.get('next', reverse('services:service_list'))
-    return HttpResponseRedirect(next_url)
+        next_url = request.GET.get('next', reverse('services:service_list'))
+        return HttpResponseRedirect(next_url)
+    return redirect('account_login')
 
 
 @login_required

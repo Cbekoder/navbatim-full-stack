@@ -41,6 +41,8 @@ def edit_profile(request):
 
 
 def favorites_view(request):
+    if not request.user.is_authenticated:
+        return redirect('account_login')
     favorites = request.user.favorites.all()
     return render(request, 'users/favorites.html', {'favorites': favorites})
 

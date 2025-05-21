@@ -1,27 +1,85 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="{% static 'login/style.css' %}"/>
+    <title>Kirish yoki Ro'yxatdan o'tish | Navbatim.uz</title>
+</head>
+<body>
+<div class="container">
+    <div class="forms-container">
+        <div class="signin-signup">
+            <form action="{% url 'account_login' %}" class="sign-in-form" method="post">{% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+                <h2 class="title">Kirish</h2>
+                <div class="input-field">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" name="username" placeholder="Username"/>
+                </div>
+                <div class="input-field">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" name="password" placeholder="Parol"/>
+                </div>
+                <input type="submit" value="Kirish" class="btn solid"/>
+            </form>
+            <form class="sign-up-form" action="{% url 'account_signup' %}" method="post">{% csrf_token %}
+                <h2 class="title">Ro'yxatdan o'tish</h2>
+                <div class="input-field">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" name="username" placeholder="Username"/>
+                </div>
+                <div class="input-field">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" name="email" placeholder="Email"/>
+                </div>
+                <div class="input-field">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" name="password" placeholder="Parol"/>
+                </div>
+                <div class="input-field">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" name="password_re" placeholder="Parolni tasdirlash"/>
+                </div>
+                <input type="submit" class="btn" value="Ro'yxatdan o'tish"/>
+            </form>
+        </div>
+    </div>
 
-{% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">Login</h2>
-    <form method="post">
-        {% csrf_token %}
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                {{ form.non_field_errors }}
+    <div class="panels-container">
+        <div class="panel left-panel">
+            <div class="content">
+                <h3>Tizimda yangimisiz?</h3>
+                <p>
+                    Unday bo'lsa o'z ro'yxatdan o'ting va servislardan qulaylik foydalaning!
+                </p>
+                <button class="btn transparent" id="sign-up-btn" style="width: fit-content; min-width: unset; padding: 0.375rem 0.75rem;">
+                    Ro'yxatdan o'tish
+                </button>
             </div>
-        {% endif %}
-        <div class="mb-3">
-            <label for="id_username" class="form-label">Username</label>
-            <input type="text" name="username" id="id_username" class="form-control" required>
+            <img src="{% static 'login/img/log.svg' %}" class="image" alt=""/>
         </div>
-        <div class="mb-3">
-            <label for="id_password" class="form-label">Password</label>
-            <input type="password" name="password" id="id_password" class="form-control" required>
+        <div class="panel right-panel">
+            <div class="content">
+                <h3>Hisobingiz mavjudmi?</h3>
+                <p>
+                    O'z hisobingizga qaytish uchun tizimga kiring va xizmatlardan foydalaning!
+                </p>
+                <button class="btn transparent" id="sign-in-btn">
+                    Kirish
+                </button>
+            </div>
+            <img src="{% static 'login/img/register.svg' %}" class="image" alt=""/>
         </div>
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
-    <p class="mt-3">
-        Don't have an account? <a href="/accounts/signup/">Sign up</a>
-    </p>
+    </div>
 </div>
-{% endblock %}
+
+<script src="{% static 'login/app.js' %}"></script>
+</body>
+</html>

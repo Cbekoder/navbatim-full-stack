@@ -8,6 +8,8 @@ from services.models import Service, BusinessProfile
 
 
 def appointment_list(request):
+    if not request.user.is_authenticated:
+        return redirect('account_login')
     # Get upcoming appointments
     upcoming_appointments = Appointment.objects.filter(
         client=request.user,
@@ -38,6 +40,8 @@ def appointment_list(request):
 
 
 def book_appointment(request, service_id):
+    if not request.user.is_authenticated:
+        return redirect('account_login')
     service = get_object_or_404(Service, pk=service_id)
     business = service.business
     
@@ -65,6 +69,8 @@ def book_appointment(request, service_id):
 
 
 def cancel_appointment(request, appointment_id):
+    if not request.user.is_authenticated:
+        return redirect('account_login')
     appointment = get_object_or_404(Appointment, pk=appointment_id, client=request.user)
     
     if appointment.status in ['pending', 'confirmed']:
@@ -78,6 +84,8 @@ def cancel_appointment(request, appointment_id):
 
 
 def reschedule_appointment(request, appointment_id):
+    if not request.user.is_authenticated:
+        return redirect('account_login')
     appointment = get_object_or_404(Appointment, pk=appointment_id, client=request.user)
     
     if appointment.status in ['pending', 'confirmed']:

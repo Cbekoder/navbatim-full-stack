@@ -100,36 +100,36 @@
     </section>
     {% endif %}
 
-    {% if deals %}
-    <section class="mb-5">
-        <h2 class="h4 fw-bold mb-4">Aksiyalar</h2>
-        <div class="card border-0 shadow-sm">
-            {% for deal in deals|slice:":1" %}
-            <div class="position-relative">
-                {% if deal.image %}
-                    <img src="{{ deal.image.url }}" alt="{{ deal.title }}" class="card-img-top" style="height: 200px; object-fit: cover;">
-                {% else %}
-                    <div class="bg-light w-100" style="height: 200px;"></div>
-                {% endif %}
-                <div class="position-absolute top-0 start-0 m-3">
-                    <span class="badge bg-danger">-{{ deal.discount_percentage }}%</span>
-                </div>
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">{{ deal.title }}</h5>
-                <p class="card-text text-muted">{{ deal.business.business_name }}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <span class="text-decoration-line-through text-muted me-2">{{ deal.original_price }} so'm</span>
-                        <span class="text-success fw-bold">{{ deal.discounted_price }} so'm</span>
-                    </div>
-                    <a href="{% url 'services:business_detail' pk=deal.business.pk %}" class="btn btn-primary">Band qilish</a>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </section>
-    {% endif %}
+{#    {% if deals %}#}
+{#    <section class="mb-5">#}
+{#        <h2 class="h4 fw-bold mb-4">Aksiyalar</h2>#}
+{#        <div class="card border-0 shadow-sm">#}
+{#            {% for deal in deals|slice:":1" %}#}
+{#            <div class="position-relative">#}
+{#                {% if deal.image %}#}
+{#                    <img src="{{ deal.image.url }}" alt="{{ deal.title }}" class="card-img-top" style="height: 200px; object-fit: cover;">#}
+{#                {% else %}#}
+{#                    <div class="bg-light w-100" style="height: 200px;"></div>#}
+{#                {% endif %}#}
+{#                <div class="position-absolute top-0 start-0 m-3">#}
+{#                    <span class="badge bg-danger">-{{ deal.discount_percentage }}%</span>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="card-body">#}
+{#                <h5 class="card-title">{{ deal.title }}</h5>#}
+{#                <p class="card-text text-muted">{{ deal.business.business_name }}</p>#}
+{#                <div class="d-flex justify-content-between align-items-center">#}
+{#                    <div>#}
+{#                        <span class="text-decoration-line-through text-muted me-2">{{ deal.original_price }} so'm</span>#}
+{#                        <span class="text-success fw-bold">{{ deal.discounted_price }} so'm</span>#}
+{#                    </div>#}
+{#                    <a href="{% url 'services:business_detail' pk=deal.business.pk %}" class="btn btn-primary">Band qilish</a>#}
+{#                </div>#}
+{#            </div>#}
+{#            {% endfor %}#}
+{#        </div>#}
+{#    </section>#}
+{#    {% endif %}#}
 
     {% if new_businesses %}
     <section class="mb-5">
@@ -232,7 +232,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-6 mb-4 mb-md-0">
-                <h2 class="h3 fw-bold mb-3">Bepul Navbatim.uz mobil ilovasi</h2>
+                <h2 class="h3 fw-bold mb-3">Navbatim.uz Telegram Web Ilovasi</h2>
                 <p class="mb-4">
                     Mutaxassislarni qidirishni osonlashtiring, xizmat ko'rsatuvchilarni baholang, navbatga yoziling, portfolio va sharhlarni ko'ring.
                 </p>
@@ -259,14 +259,11 @@
                 </div>
 
                 <div class="d-flex flex-wrap gap-2">
-                    <a href="#" class="btn btn-light">
-                        <i class="bi bi-apple me-2"></i>App Store
+                    <a href="https://t.me/navbatim_uz_bot" class="btn btn-light">
+                        <i class="bi bi-telegram me-2"></i>Telegram Bot
                     </a>
-                    <a href="#" class="btn btn-light">
-                        <i class="bi bi-google-play me-2"></i>Google Play
-                    </a>
-                    <a href="#" class="btn btn-light">
-                        <i class="bi bi-phone me-2"></i>Huawei AppGallery
+                    <a href="/" class="btn btn-light">
+                        <i class="bi bi-google me-2"></i>Web-brauzer
                     </a>
                 </div>
             </div>
@@ -297,41 +294,41 @@
     </div>
 </section>
 
-<section class="py-5 bg-light">
-    <div class="container">
-        <h2 class="h3 fw-bold text-center mb-5">Navbatim.uz haqida 20 000 dan ortiq sharhlar</h2>
-
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% for testimonial in testimonials %}
-            <div class="col">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="mb-3">
-                            {% for i in "12345" %}
-                                {% if forloop.counter <= testimonial.rating %}
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                {% else %}
-                                    <i class="bi bi-star text-warning"></i>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        <p class="card-text mb-4">"{{ testimonial.text }}"</p>
-                        <p class="card-text fw-medium">{{ testimonial.name }}</p>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-12">
-                <p class="text-center text-muted">Hozircha sharhlar yo'q</p>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="text-center mt-4">
-            <a href="#" class="text-decoration-none text-primary small">Google Play va App Store'da sharhlarni ko'ring</a>
-        </div>
-    </div>
-</section>
+    {#<section class="py-5 bg-light">#}
+    {#    <div class="container">#}
+    {#        <h2 class="h3 fw-bold text-center mb-5">Navbatim.uz haqida 20 000 dan ortiq sharhlar</h2>#}
+    {##}
+    {#        <div class="row row-cols-1 row-cols-md-3 g-4">#}
+    {#            {% for testimonial in testimonials %}#}
+    {#            <div class="col">#}
+    {#                <div class="card h-100 border-0 shadow-sm">#}
+    {#                    <div class="card-body p-4">#}
+    {#                        <div class="mb-3">#}
+    {#                            {% for i in "12345" %}#}
+    {#                                {% if forloop.counter <= testimonial.rating %}#}
+    {#                                    <i class="bi bi-star-fill text-warning"></i>#}
+    {#                                {% else %}#}
+    {#                                    <i class="bi bi-star text-warning"></i>#}
+    {#                                {% endif %}#}
+    {#                            {% endfor %}#}
+    {#                        </div>#}
+    {#                        <p class="card-text mb-4">"{{ testimonial.text }}"</p>#}
+    {#                        <p class="card-text fw-medium">{{ testimonial.name }}</p>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#            {% empty %}#}
+    {#            <div class="col-12">#}
+    {#                <p class="text-center text-muted">Hozircha sharhlar yo'q</p>#}
+    {#            </div>#}
+    {#            {% endfor %}#}
+    {#        </div>#}
+    {##}
+    {#        <div class="text-center mt-4">#}
+    {#            <a href="#" class="text-decoration-none text-primary small">Google Play va App Store'da sharhlarni ko'ring</a>#}
+    {#        </div>#}
+    {#    </div>#}
+    {#</section>#}
 
 <section class="py-5 bg-dark text-white">
     <div class="container">

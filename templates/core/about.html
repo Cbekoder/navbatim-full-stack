@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Kompaniya haqida - Navbatim.uz{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h1 class="display-5 mb-4">Navbatim.uz haqida</h1>
+            <p class="lead">
+                Navbatim.uz — foydalanuvchilarga Oʻzbekistondagi eng yaxshi biznes va mutaxassislardan xizmatlarni topish va bron qilishda yordam beradigan platforma.
+            </p>
+            <p>
+                Bizning maqsadimiz — odamlar uchun xizmatlarni onlayn tarzda topish, baholash va bron qilishni osonlashtirish. Biz bizneslar uchun uchrashuvlarni boshqarish, ishlarini namoyish qilish va yangi mijozlar bilan bogʻlanish imkonini beruvchi vositalarni taqdim etamiz.
+            </p>
+            <p>
+                Mutaxassis qidiryapsizmi, sharhlarni oʻqimoqchimisiz yoki onlayn navbatga yozilmoqchimisiz — Navbatim.uz sizga yordam beradi.
+            </p>
+            <h3 class="mt-5">Nega aynan biz?</h3>
+            <ul>
+                <li>Foydalanuvchilar va bizneslar uchun qulay interfeys</li>
+                <li>Tasdiqlangan sharhlar va reytinglar</li>
+                <li>Xizmatlar va toifalarning keng tanlovi</li>
+                <li>Xavfsiz va tezkor bron qilish jarayoni</li>
+            </ul>
+            <h3 class="mt-5">Aloqa</h3>
+            <p>
+                Savollaringiz yoki fikr-mulohazalaringiz bo‘lsa, <a href="{% url 'contact' %}">biz bilan bog‘laning</a>.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
