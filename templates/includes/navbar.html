@@ -3,28 +3,18 @@
     <div class="bg-gradient-primary text-white">
         <div class="container">
             <div class="py-3">
-                <h2 class="h5 mb-3">O'zbekistonda onlayn navbat olish</h2>
-                <form action="/services/" method="get" class="position-relative">
-                    <input type="text" name="q" class="form-control form-control-lg ps-4" placeholder="Xizmat, kompaniya yoki mutaxassis" aria-label="Search">
-                    <button type="submit" class="btn bg-white position-absolute top-50 end-0 translate-middle-y me-2">
-                        <i class="bi bi-search text-muted"></i>
-                    </button>
-                </form>
-            </div>
-
-            <div class="py-3">
                 <div class="row row-cols-3 row-cols-sm-4 row-cols-md-6 g-5">
                     {% for category in global_categories %}
-                    <div class="col">
-                        <a href="/services/category/{{category.slug}}" class="text-decoration-none">
-                            <div class="d-flex flex-column align-items-center">
-                                <div class="rounded p-3 mb-2 bg-light bg-opacity-25 text-white ">
-                                    <i class="bi bi-{{ category.icon }} fs-4"></i>
+                        <div class="col">
+                            <a href="/services/category/{{ category.slug }}" class="text-decoration-none">
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="rounded p-3 mb-2 bg-light bg-opacity-25 text-white ">
+                                        <i class="bi bi-{{ category.icon }} fs-4"></i>
+                                    </div>
+                                    <span class="text-white small text-center">{{ category.name }}</span>
                                 </div>
-                                <span class="text-white small text-center">{{ category.name }}</span>
-                            </div>
-                        </a>
-                    </div>
+                            </a>
+                        </div>
                     {% endfor %}
                     <div class="col">
                         <a href="/services/" class="text-decoration-none">
@@ -38,46 +28,63 @@
                     </div>
                 </div>
             </div>
+            <div class="py-3">
+                <h2 class="h5 mb-3">O'zbekistonda onlayn navbat olish</h2>
+                <form action="/services/" method="get" class="position-relative">
+                    <input type="text" name="q" class="form-control form-control-lg ps-4"
+                           placeholder="Xizmat, kompaniya yoki mutaxassis" aria-label="Search">
+                    <button type="submit" class="btn bg-white position-absolute top-50 end-0 translate-middle-y me-2">
+                        <i class="bi bi-search text-muted"></i>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-    
+
     <div class="bg-white border-bottom">
         <div class="container">
             <ul class="nav nav-tabs border-0">
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Tanlash</a>
+                    <a class="nav-link {% if request.path == '/' %}active{% endif %}"
+                       href="{% url 'home' %}">Tanlash</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/services/' %}active{% endif %}" href="/services/">Katalog</a>
+                    <a class="nav-link {% if request.path == '/services/' %}active{% endif %}"
+                       href="/services/">Katalog</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/services/deals/' %}active{% endif %}" href="/services/deals/">
+                    <a class="nav-link {% if request.path == '/services/deals/' %}active{% endif %}"
+                       href="/services/deals/">
                         Aksiyalar
-                        <img src="{% static 'img/hot-sale.png' %}" alt="Hot Sale" style="height: 1.5em; vertical-align: top;">
+                        <img src="{% static 'img/hot-sale.png' %}" alt="Hot Sale"
+                             style="height: 1.5em; vertical-align: top;">
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/services/map/' %}active{% endif %}" href="/services/map/">Xaritada</a>
+                    <a class="nav-link {% if request.path == '/services/map/' %}active{% endif %}"
+                       href="/services/map/">Xaritada</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/users/favorites/' %}active{% endif %}" href="{% url 'favorites' %}">Sevimlilar</a>
+                    <a class="nav-link {% if request.path == '/users/favorites/' %}active{% endif %}"
+                       href="{% url 'favorites' %}">Sevimlilar</a>
                 </li>
                 <li class="nav-item ms-auto">
-                    <a class="nav-link {% if request.path == '/appointments/' %}active{% endif %}" href="{% url 'appointment_list' %}">
+                    <a class="nav-link {% if request.path == '/appointments/' %}active{% endif %}"
+                       href="{% url 'appointment_list' %}">
                         <i class="bi bi-calendar me-1"></i> Mening navbatlarim
                     </a>
                 </li>
             </ul>
         </div>
     </div>
-    
+
     <div class="collapse navbar-collapse d-md-none" id="navbarMobile">
         <div class="container py-3">
             <div class="d-flex flex-column gap-2">
                 <a href="/services/" class="btn btn-outline-primary btn-sm">
                     Biznes uchun
                 </a>
-                
+
                 {% if user.is_authenticated %}
                     <a href="{% url 'profile' %}" class="text-decoration-none">Profil</a>
                     <a href="{% url 'appointment_list' %}" class="text-decoration-none">Mening navbatlarim</a>
